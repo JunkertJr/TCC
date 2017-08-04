@@ -3,7 +3,7 @@ package tcc2017;
 public class App {
 	
 	public static void main(String[] args) {
-		TelaManterCor tela = new TelaManterCor();
+		TelaPontosPorFuncao tela = new TelaPontosPorFuncao();
 		
 //		tela.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 //		tela.setSize(350, 250);
