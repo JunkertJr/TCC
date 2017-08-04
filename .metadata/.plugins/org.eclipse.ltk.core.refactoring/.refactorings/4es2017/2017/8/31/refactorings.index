@@ -1,0 +1,7 @@
+1501845915896	Rename local variable 'dir'
+1501845927891	Rename local variable 'enc'
+1501846715004	Delete element
+1501848473884	Rename local variable 'btnIncluir'
+1501849783923	Extract local variable 'path'
+1501850783067	Rename local variable 'fieldCodigo'
+1501851088262	Extract method 'configuracoesDaTela'
