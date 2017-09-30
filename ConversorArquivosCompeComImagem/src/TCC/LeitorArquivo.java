@@ -41,7 +41,7 @@ public class LeitorArquivo {
 	}
 		
 	public static File[] buscaArquivoDoDiretorio(File diretorio) {
-		Vector vetor = new Vector();
+		Vector<File> vetor = new Vector<File>();
 		File[] files = diretorio.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isDirectory()) {
