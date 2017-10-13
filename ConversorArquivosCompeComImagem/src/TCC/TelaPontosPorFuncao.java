@@ -1,5 +1,6 @@
 package TCC;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 
 public class TelaPontosPorFuncao extends JDialog {
 	private static final long serialVersionUID = 1L;
@@ -39,34 +41,49 @@ public class TelaPontosPorFuncao extends JDialog {
 	private static final String ALI_MEDIA = "@ALI_MEDIA";
 	private static final String ALI_BAIXA = "@ALI_BAIXA";
 
-	private BigInteger pontosTotais;
+	private BigInteger pontosTotais = BigInteger.ZERO;
 
 	public TelaPontosPorFuncao() {
 
-		JButton btnOpenExplorer = new JButton("...");
-		JButton btnCalcular = new JButton("Calcular pontos por função");
-		JLabel labelPath = new JLabel("Informar o diretório: ");
+		JLabel teste = new JLabel(); 
+		JLabel labelPath = new JLabel("Diretório: ");
 		final JTextField fieldPath = new JTextField();
+		JButton btnOpenExplorer = new JButton("...");
+		
+		JButton btnCalcular = new JButton("Calcular pontos por função");
 		JButton btnSair = new JButton("Sair");
 
-		final JLabel labelResultadoDiretorio = new JLabel("A quantidade de pontos por função nesse diretório é: ");
+		final JLabel labelResultado = new JLabel("Pontos por função: ");
 
 		configuracoesDaTela();
-
-		labelPath.setBounds(18, 10, 118, 30);
+		
+		Font font = new Font("SansSerif", Font.BOLD, 15); 
+		teste.setBounds(18, 20, 400, 60);
+		teste.setText("<html><body><div style='text-align: center;'>Para usar a aplicação, informe algum diretório que contenha arquivos da extensão JAVA.</div></body></html>");
+		teste.setFont(font);
+		this.add(teste);
+		
+//		labelResultado.setBounds(18, 100, 118, 30);
+//		labelResultado.setFont(fontPath);
+//		this.add(labelResultado);
+		
+		Font fontPath = new Font("SansSerif", Font.BOLD, 14);
+		labelPath.setBounds(18, 100, 118, 30);
+		labelPath.setFont(fontPath);
 		this.add(labelPath);
-
-		fieldPath.setBounds(135, 15, 250, 20);
+		
+		fieldPath.setBounds(93, 106, 290, 20);
 		this.add(fieldPath);
 
-		btnOpenExplorer.setBounds(390, 14, 20, 20);
+		btnOpenExplorer.setBounds(390, 105, 20, 20);
 		btnOpenExplorer.setMnemonic(KeyEvent.VK_E);
 		this.add(btnOpenExplorer);
 
-		btnCalcular.setBounds(135, 40, 190, 20);
+		btnCalcular.setBounds(18, 185, 195, 30);
+		btnCalcular.setMnemonic(KeyEvent.VK_C);
 		this.add(btnCalcular);
 
-		btnSair.setBounds(355, 220, 57, 25);
+		btnSair.setBounds(350, 185, 62, 30);
 		btnSair.setMnemonic(KeyEvent.VK_S);
 		this.add(btnSair);
 
@@ -132,10 +149,12 @@ public class TelaPontosPorFuncao extends JDialog {
 		btnSair.addActionListener(acaoSair);
 	}
 
-	private void validaFilesEncontrados(List<File> filesJava) {
+	private boolean validaFilesEncontrados(List<File> filesJava) {
 		if (filesJava.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Não foi encontrado arquivo Java nesse diretório.");
+			return false;
 		}
+		return true;
 	}
 	
 	private void calculaPontos(String path) throws FileNotFoundException, IOException {
@@ -152,68 +171,79 @@ public class TelaPontosPorFuncao extends JDialog {
 			}
 		}
 		
-		validaFilesEncontrados(filesJava);
-		
-		for (File file : filesJava) {
-			FileReader fileReader = new FileReader(file);
-			@SuppressWarnings("resource")
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-			while (bufferedReader.ready()) {
-				String linha = bufferedReader.readLine();
-
-				verificaPontos(linha);
-				System.out.println(linha);
+		if (validaFilesEncontrados(filesJava)){
+			
+			for (File file : filesJava) {
+				FileReader fileReader = new FileReader(file);
+				@SuppressWarnings("resource")
+				BufferedReader bufferedReader = new BufferedReader(fileReader);
+				
+				while (bufferedReader.ready()) {
+					String linha = bufferedReader.readLine();
+					
+					verificaPontos(linha);
+					System.out.println(linha);
+				}
+				
+				mostraResultado(this);
 			}
 		}
+		
+	}
+
+	private void mostraResultado(TelaPontosPorFuncao telaPontosPorFuncao) {
+		JLabel label = new JLabel("<html><div style='text-align: center;'>A quantidade de pontos por função no diretório informado é  : <br><font color='green'>" + pontosTotais + "</font></div></html>");
+		label.setFont(new Font ("SansSerif", Font.BOLD, 15));
+//		TODO:mudar tamanhoo da fonte do resultado
+		JOptionPane.showMessageDialog(null, label, "Pronto", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private void verificaPontos(String linha) {
 
 		if (linha.contains(ALI_BAIXA)) {
-			pontosTotais.add(new BigInteger("7"));
+			pontosTotais = pontosTotais.add(new BigInteger("7"));
 
 		} else if (linha.contains(ALI_MEDIA)) {
-			pontosTotais.add(new BigInteger("10"));
+			pontosTotais = pontosTotais.add(new BigInteger("10"));
 			
 		} else if (linha.contains(ALI_ALTA)) {
-			pontosTotais.add(new BigInteger("15"));
+			pontosTotais = pontosTotais.add(new BigInteger("15"));
 			
 		} else if (linha.contains(AIE_BAIXA)) {
-			pontosTotais.add(new BigInteger("5"));
+			pontosTotais = pontosTotais.add(new BigInteger("5"));
 			
 		} else if (linha.contains(AIE_MEDIA)) {
-			pontosTotais.add(new BigInteger("7"));
+			pontosTotais = pontosTotais.add(new BigInteger("7"));
 			
 		} else if (linha.contains(AIE_ALTA)) {
-			pontosTotais.add(new BigInteger("10"));
+			pontosTotais = pontosTotais.add(new BigInteger("10"));
 			
 		} else if (linha.contains(IE_BAIXA)) {
-			pontosTotais.add(new BigInteger("3"));
+			pontosTotais = pontosTotais.add(new BigInteger("3"));
 			
 		} else if (linha.contains(IE_MEDIA)) {
-			pontosTotais.add(new BigInteger("4"));
+			pontosTotais = pontosTotais.add(new BigInteger("4"));
 			
 		} else if (linha.contains(IE_ALTA)) {
-			pontosTotais.add(new BigInteger("6"));
+			pontosTotais = pontosTotais.add(new BigInteger("6"));
 			
 		} else if (linha.contains(OE_BAIXA)) {
-			pontosTotais.add(new BigInteger("4"));
+			pontosTotais = pontosTotais.add(new BigInteger("4"));
 			
 		} else if (linha.contains(OE_MEDIA)) {
-			pontosTotais.add(new BigInteger("5"));
+			pontosTotais = pontosTotais.add(new BigInteger("5"));
 			
 		} else if (linha.contains(OE_ALTA)) {
-			pontosTotais.add(new BigInteger("7"));
+			pontosTotais = pontosTotais.add(new BigInteger("7"));
 			
 		} else if (linha.contains(CE_BAIXA)) {
-			pontosTotais.add(new BigInteger("3"));
+			pontosTotais = pontosTotais.add(new BigInteger("3"));
 			
 		} else if (linha.contains(CE_MEDIA)) {
-			pontosTotais.add(new BigInteger("4"));
+			pontosTotais = pontosTotais.add(new BigInteger("4"));
 			
 		} else if (linha.contains(CE_ALTA)) {
-			pontosTotais.add(new BigInteger("6"));
+			pontosTotais = pontosTotais.add(new BigInteger("6"));
 			
 		}
 	}
@@ -222,10 +252,9 @@ public class TelaPontosPorFuncao extends JDialog {
 
 		this.setTitle("Calculadora de pontos por função v1.1");
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		this.setSize(450, 300);
+		this.setSize(450, 270);
 		this.setLocationRelativeTo(null);
 		this.setLayout(null);
-
 	}
 
 }
